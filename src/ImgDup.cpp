@@ -14,6 +14,16 @@ void ImageProcessor::processDirectory(boost::filesystem::path path) {
             continue;
         }
 
+        const std::vector<std::string> acceptableExtensions{".jpg", ".jpeg", ".png"};
+        bool isAcceptableExtension = std::any_of(
+                acceptableExtensions.cbegin(), acceptableExtensions.cend(), [&entry](const std::string &ext){
+            return ext == entry.path().extension();
+        });
+
+        if (!isAcceptableExtension) {
+            continue;
+        }
+
         ulong64 hash;
         ph_dct_imagehash(entry.path().c_str(), hash);
         records.emplace_back(entry.path(), hash);
@@ -30,7 +40,7 @@ std::vector<fs::path> ImageProcessor::closestForImage(boost::filesystem::path pa
     tree_.search(ImageRecord{path, hash}, numClosest, &results, &distances);
 
     std::vector<fs::path> res;
-    std::transform(results.cbegin(), results.cend(), res.begin(), [](const ImageRecord &record){return record.path;});
+    std::transform(results.cbegin(), results.cend(), std::back_inserter(res), [](const ImageRecord &record){return record.path;});
     return res;
 }
 

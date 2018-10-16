@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ImgDup.hpp"
 #include <QMainWindow>
 #include <QLabel>
 
@@ -11,8 +12,17 @@ public:
     ~MainWindow();
 
 private:
-    QLabel *leftImageView;
-    QLabel *rightImageView;
+    void startProcessing();
+
+    void setupLayout();
+
+    QWidget *central_;
+    QLabel *leftImageView_;
+    QLabel *rightImageView_;
+    QLabel *leftImageLabel_;
+    QLabel *rightImageLabel_;
+    ImageProcessor imageProcessor_;
+    QString rootDir_;
 };
 
 } // ns imgdup
