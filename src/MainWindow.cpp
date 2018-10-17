@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QMenuBar>
 #include <QKeyEvent>
+#include <QApplication>
 
 #include <algorithm>
 
@@ -88,7 +89,9 @@ void MainWindow::updateComparisonView() {
     leftImageView_->setPixmap(leftPixmap);
     leftImageLabel_->setText(currentPath_.string().c_str());
 
-    matchesTable_->clearContents();
+    while (matchesTable_->rowCount() > 0) {
+        matchesTable_->removeRow(0);
+    }
     for (std::size_t i = 0; i < currentMatches_.size(); ++i) {
         auto *item = new QTableWidgetItem;
         item->setText(currentMatches_[i].string().c_str());
@@ -106,12 +109,19 @@ void MainWindow::displayMatchIndexed(std::size_t idx) {
 }
 
 void MainWindow::currentCellChanged(int row, int, int, int){
+    if (row == -1) {
+        return;
+    }
     displayMatchIndexed(static_cast<std::size_t>(row));
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
 
     QTableWidgetItem *currentTableItem = matchesTable_->currentItem();
+    if (currentTableItem == nullptr) {
+        matchesTable_->selectRow(0);
+        currentTableItem = matchesTable_->currentItem();
+    }
 
     switch (event->key()) {
         case Qt::Key_D:
@@ -122,6 +132,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 
         case Qt::Key_N:
             toCheck_.erase(currentPath_);
+            if (toCheck_.empty()) {
+                QApplication::quit();
+            }
             checkPicture(*toCheck_.begin());
             break;
 

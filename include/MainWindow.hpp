@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QTableWidget>
+#include <opencv2/img_hash.hpp>
 #include <boost/filesystem.hpp>
 #include <set>
 
@@ -35,7 +36,7 @@ private:
     QLabel *rightImageLabel_;
     QTableWidget *matchesTable_;
 
-    ImageProcessor imageProcessor_;
+    ImageProcessor<cv::img_hash::PHash> imageProcessor_;
     QString rootDir_;
     std::set<boost::filesystem::path> toCheck_;
     boost::filesystem::path currentPath_;
