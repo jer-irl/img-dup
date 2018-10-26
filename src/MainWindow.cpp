@@ -5,6 +5,7 @@
 #include <QMenuBar>
 #include <QKeyEvent>
 #include <QApplication>
+#include <QScreen>
 
 #include <algorithm>
 
@@ -13,11 +14,17 @@ namespace fs = boost::filesystem;
 namespace imgdup {
 
 MainWindow::MainWindow() {
+    const QSize screenSize = QGuiApplication::primaryScreen()->size();
+    setMaximumSize(screenSize);
+    setFixedSize(screenSize);
+
     central_ = new QWidget(this);
     setCentralWidget(central_);
 
     leftContainer_ = new QWidget(central_);
     rightContainer_ = new QWidget(central_);
+    leftContainer_->setMinimumWidth(width() / 3);
+    rightContainer_->setMinimumWidth(width() / 3);
 
     leftImageView_ = new QLabel(leftContainer_);
     rightImageView_ = new QLabel(rightContainer_);
@@ -88,7 +95,7 @@ void MainWindow::checkPicture(const boost::filesystem::path &path) {
 
 void MainWindow::updateComparisonView() {
     QPixmap leftPixmap(currentPath_.string().c_str());
-    leftImageView_->setPixmap(leftPixmap);
+    leftImageView_->setPixmap(leftPixmap.scaled(leftImageView_->size(), Qt::AspectRatioMode::KeepAspectRatio));
     leftImageLabel_->setText(currentPath_.string().c_str());
 
     while (matchesTable_->rowCount() > 0) {
@@ -106,7 +113,7 @@ void MainWindow::updateComparisonView() {
 
 void MainWindow::displayMatchIndexed(std::size_t idx) {
     QPixmap rightPixmap(currentMatches_[idx].string().c_str());
-    rightImageView_->setPixmap(rightPixmap);
+    rightImageView_->setPixmap(rightPixmap.scaled(rightImageView_->size(), Qt::AspectRatioMode::KeepAspectRatio));
     rightImageLabel_->setText(currentMatches_[idx].string().c_str());
 }
 
