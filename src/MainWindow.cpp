@@ -60,6 +60,8 @@ void MainWindow::startProcessing() {
         fs::path path = entry.path();
         if (!fs::is_regular_file(path)) {
             continue;
+        } else if (path.filename().string()[0] == '.') {
+            continue;
         }
 
         const std::vector<std::string> extensionsToCheck{".jpg", ".jpeg", ".png"};

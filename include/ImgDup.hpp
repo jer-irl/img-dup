@@ -39,6 +39,8 @@ void ImageProcessor<HashType>::processDirectory(boost::filesystem::path path) {
     for (fs::directory_entry &entry : fs::recursive_directory_iterator(path)) {
         if (!fs::is_regular_file(entry.path())) {
             continue;
+        } else if (entry.path().filename().string()[0] == '.') {
+            continue;
         }
 
         const std::vector<std::string> acceptableExtensions{".jpg", ".jpeg", ".png"};
